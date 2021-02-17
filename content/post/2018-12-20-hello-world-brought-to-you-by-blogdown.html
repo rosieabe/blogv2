@@ -1,0 +1,102 @@
+---
+title: Hello World! Brought to you by blogdown
+author: Rosie
+date: '2018-12-20'
+slug: hello-world-brought-to-you-by-blogdown
+categories:
+  - Off-Topic
+tags:
+  - Introduction
+---
+
+
+
+<p>So I thought I’d make my first post here about the process for me, a non-web-developer, non-guru-nor-R-master to create this blog, host it, and then tie it to this domain. TL;DR not 100% smooth for the truest of noobs, but mostly painless.</p>
+<p>I’ll quickly name off the steps that I took after reading Yihui’s <code>blogdown</code> book, found <a href="https://bookdown.org/yihui/blogdown/">here</a>. You honestly don’t need to read this post to make a blogdown blog, and of course there are other ways to go about this also mentioned in the book, but I’m just documenting some things that I’ve done, personally.</p>
+<ol style="list-style-type: decimal">
+<li>Updated both R and RStudio</li>
+<li>Installed <code>blogdown</code> package</li>
+<li>Created new repository on Github</li>
+<li>Created R Blogdown project</li>
+<li>Moved blogdown files into my local repository, commit changes, and push</li>
+<li>Made account on Netlify and linked my repository</li>
+<li>Set up CNAME to have my personal domain link to Netlify website</li>
+<li>Edited config file and created a post</li>
+</ol>
+<p>This, by the way, is my third attempt at a blog with blogdown–my first two attempts were successful but I first used the Lithium theme which was fine but I wanted to switch to one of the other minimal themes before actually getting started for real (to save myself headache of switching later on).</p>
+<hr />
+<div id="step-1-updating-or-installing-if-you-havent-yet-r-and-rstudio" class="section level2">
+<h2>Step 1: Updating (or installing if you haven’t yet) R and RStudio</h2>
+<p>I’ve had R and RStudio on my Mac for about a year. In fact when I first ordered my laptop in 2017 (it was to replace a 2009 model), I had grand plans to start this blog or do a lot more personal work…none of which happened. All of this is to say that if you, like me, have not updated R or RStudio in about a year, it might be a good time to do so, and honestly you should probably update on a more frequent basis regardless of whether or not you plan to start blogging.</p>
+<p>In terms of installation, I’ve always just downloaded R from the <a href="https://cran.r-project.org">CRAN website</a> and downloaded RStudio from the <a href="https://www.rstudio.com/products/rstudio/download/">RStudio site</a> and I’ve had no issues that way. In case you’re having some issues downloading R, perhaps checkout this <a href="https://www.datacamp.com/community/tutorials/installing-R-windows-mac-ubuntu">Datacamp Article</a>.</p>
+<p>On my previous installation of RStudio, I was not able to successfully connect to my github account and get the git pane to work. It’s not 100% necessary, but it is a nice feature of RStudio. In general, I highly recommend using RStudio if you are developing in R. I personally prefer it to Jupyter notebooks (which I use when developing Python).</p>
+</div>
+<div id="step-2-installed-blogdown" class="section level2">
+<h2>Step 2: Installed <code>blogdown</code></h2>
+<p>I won’t provide that tutorial here but it is discussed in Yihui’s book <a href="https://bookdown.org/yihui/blogdown/installation.html">here</a>. I followed the exact instructions. It is rather painless!</p>
+</div>
+<div id="step-3-created-a-repository-on-github-and-cloned-as-r-project" class="section level2">
+<h2>Step 3: Created a repository on Github and cloned as R Project</h2>
+<p>Full disclaimer: I have used git a bit–but I’m no master. In order for this blog to work, you likely need to use git, unless you want to keep uploading static files as your way of updating a website.</p>
+<p>I was recently at a talk hosted by RLadies*, and the topic was about Git and version control with R and had a few takeaways:</p>
+<ul>
+<li>It’s better practice and easier to track a repository from the beginning of a project</li>
+<li>Using git with RStudio looks like a dream to anyone not fully comfortable with command line git, and looks even better for R users than the Github Desktop app (although that is a solid alternative if you don’t use R)</li>
+</ul>
+<p>With those takeaways I decided to start off exactly the way that I learned at the talk, first create the repository on Github in your browser. I initialized a repository with a readme but with no <code>.gitignore</code> file (RStudio will create a <code>.gitignore</code> file with R-specific ignored files). I then created a new project using the RStudio GUI, selected “Version Control” and then cloned the repository from Github (which only had a <code>README.md</code>). Once you do this you will have a new R Project open with a Git pane that shows your git status. It’s really a neat feature in RStudio. Of course, you do not need to use RStudio to do this, you could use the command line or another app to clone the repository to your local computer, but it looks pretty neat to use RStudio’s tools for checking git status.</p>
+</div>
+<div id="step-4-create-a-blogdown-project-separately" class="section level2">
+<h2>Step 4: Create a <code>blogdown</code> project separately</h2>
+<p>Again, this is covered in Yihui’s <a href="https://bookdown.org/yihui/blogdown/get-started.html">book</a>, so I don’t want to bore you, if you’re just looking for a straight up tutorial.</p>
+<p>I used the lithium theme (the default) the first times I tried this out, but I decided for this blog to use the <a href="https://github.com/road2stat/hugo-tanka">Tanka</a> theme which one that is recommended in the blogdown book. I chose it mainly because it was even simpler looking than the Lithium theme, and has fonts that don’t have serifs (personal preference).</p>
+<p>There are options you can check off, and I left them all checked, just to double check my site before adding any of my own content. Once you finish the setup and click ok, at this point, everything you need to have a website/blog is ready! If you kept the default site and sample posts, you will be able to see them in their glory once you deploy on Netlify. Before making any changes, personally, I’d leave everything in their current state and make sure to start tracking these files on git.</p>
+<div class="figure">
+<img src="/post/2018-12-20-hello-world-brought-to-you-by-blogdown_files/Screen%20Shot%202018-12-20%20at%2012.56.33%20AM.png" alt="see that git pane in the top right?" width="400" />
+<p class="caption">see that git pane in the top right?</p>
+</div>
+</div>
+<div id="step-5-moved-blog-files-into-local-repository-committed-and-pushed-changes" class="section level2">
+<h2>Step 5: Moved blog files into local repository, committed and pushed changes</h2>
+<p>In order to make sure that these get tracked by git, I moved all of the files generated by <code>Step 4</code>, besides the <code>.Rproj</code> file, into my local blogposts repository (which already has an <code>.Rproj</code> file). Instead of making the <code>blogdown</code> files first and then linking to github, I found that this was a little bit easier for me to ensure that my project was being tracked by git and that my paths were all exactly how I wanted them to be. In case this was a terrible, terrible explanation, <a href="http://happygitwithr.com/existing-github-first.html">check this link out</a>. I had to do this because the RStudio GUI will create a new directory anyway, since I believe blogdown requires a new site to be made in a clean directory.</p>
+<p>I then commited all changes and pushed to the master branch (which is what I will tell Netlify to check as my production branch). This again is rather easy using RStudio.</p>
+<div class="figure">
+<img src="/post/2018-12-20-hello-world-brought-to-you-by-blogdown_files/Screen%20Shot%202018-12-20%20at%2012.57.30%20AM.png" alt="Committing made easy" />
+<p class="caption">Committing made easy</p>
+</div>
+</div>
+<div id="step-6-created-a-netlify-account-and-linked-to-my-github-blog-repository" class="section level2">
+<h2>Step 6: Created a Netlify account and linked to my Github blog repository</h2>
+<p>I was following Yihui’s advice practically verbatim at this point and everything worked out. The key thing here is to create your Netlify account and link it to your Github repository. The site should begin to deploy without any issues. If it did not, be sure that your path is correct to your blog posts in your repository, however if you made sure to do Step 5, I think you should be fine.</p>
+</div>
+<div id="step-7-optional-pointed-my-domain-to-netlify" class="section level2">
+<h2>Step 7: [OPTIONAL] Pointed my domain to Netlify</h2>
+<p>I purchased my domains through Google domains, so I can give a little advice if you are in a similar boat. In your domain dashboard, you go to <em>DNS</em> -&gt; <em>Custom resource records</em> and you can add the www CNAME and the @ A name. I don’t know a whole lot about this stuff, but I think Google makes things a bit easier.</p>
+<p>It might not change right away but eventually I got the default site to show up at my domain.</p>
+</div>
+<div id="step-8-made-blog-my-own" class="section level2">
+<h2>Step 8: Made blog my own!</h2>
+<p>Steps for this included:</p>
+<ul>
+<li>Edited the config.toml file that was created upon initialization to reflect your urls</li>
+<li>Deleted sample posts, made this one!
+<ul>
+<li>Again, this is something that is far more simple with Rstudio, because there is an Addin that will let you make a new post, with an interactive popup and everything to help you create your post. I’m using R Markdown for this one, but regular Markdown files also should work.</li>
+<li>I deleted the sample content that was in the <code>content/post</code> directory</li>
+</ul></li>
+<li>Save post and config files, commit your changes, and hope for the best.</li>
+<li>Troubleshooting note: Since I wrote this post with a <code>.Rmd</code>, I had to commit the <code>.html</code> file that appears in <code>content/</code> when building/serving the site. I ignored this file at first, but then I realized that blogdown doesn’t necessarily render an <code>.Rmd</code> the same way it does with a regular <code>.md</code>.</li>
+</ul>
+<hr />
+<p>I finally have a domain with my name, that has actual content! I’m proud. But of course, I wouldn’t be able to do this at all without some great people so I have to lend credit to the mastermind, the genius Yihui Xie (<a href="https://yihui.name/en/">link to his blog</a>). blogdown is an incredible package and I’m so excited to see what I can do with it.</p>
+<p>Overall, I think Yihui says in his blogdown boook that this should take 10 minutes. That’s pretty true for me but adding my own posts, configuring things, and then retrying different themes and methods for linking to github took a couple of extra tries. So in my experience it was a bit longer, although I’ve already admitted I’m rather noob-status when it comes to github, hosting websites, etc.</p>
+<div id="references" class="section level3">
+<h3>References</h3>
+<ul>
+<li>Blogdown Book (linked yet again!): <a href="https://bookdown.org/yihui/blogdown/" class="uri">https://bookdown.org/yihui/blogdown/</a></li>
+<li>Happy Git with R: <a href="http://happygitwithr.com" class="uri">http://happygitwithr.com</a></li>
+</ul>
+<p>* The talk was hosted by Mine Cetinkaya-Rundel (who I believe works a bit with RStudio). She was great, and I’m super thankful to get to hear her speak for free. She definitely helped spur me to create this blog and actually write in it.</p>
+<hr />
+<p>This post was edited on 1/6/2019 to fix grammar and phrasing. Originally the post was written at around 2AM so the edits were much needed!</p>
+</div>
+</div>

@@ -1,0 +1,173 @@
+---
+title: data.table - A list of examples I like to reference
+author: Rosie
+date: '2019-01-06'
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+slug: data-table-a-list-of-examples-i-like-to-reference
+categories:
+  - R
+  - Reference
+tags:
+  - data.table
+---
+
+
+<div id="TOC">
+<ul>
+<li><a href="#warning-this-is-not-particularly-intended-for-beginner-data.table-users">Warning: This is not particularly intended for beginner data.table users</a></li>
+<li><a href="#tips-and-tricks-list">Tips and Tricks List:</a><ul>
+<li><a href="#ordering-data-by-multiple-columns-using-frank-and-setorder">Ordering data by multiple columns using <code>frank()</code> and <code>setorder()</code></a></li>
+<li><a href="#fill-nas-in-a-data.table-using-set">Fill NAs in a data.table using <code>set()</code></a></li>
+<li><a href="#writing-functionsprocedures-containing-data.tables-sometimes-modifying-the-input-data.table-is-ok-but-be-sure-you-know-exactly-what-youre-doing">Writing functions/procedures containing data.tables – Sometimes modifying the input data.table is OK, but be sure you know exactly what you’re doing!</a></li>
+<li><a href="#what-the-heck-is-.i">What the heck is <code>.I</code>?</a></li>
+<li><a href="#what-the-heck-is-cj">What the heck is <code>CJ()</code>?</a></li>
+</ul></li>
+</ul>
+</div>
+
+<p>I use the <code>data.table</code> package quite a bit at work and it’s become my preferred way to work with data in R, even with smaller data sizes. As much as the tidyverse is readable and smart, there is something about <code>data.table</code> syntax that I’ve really come to appreciate. It’s harder to read, but quicker to type. But the readability becomes an issue sometimes, since I might forget tips and tricks that have been useful in the past.</p>
+<p>I wanted to create a post here with rather selfish intentions, honestly. This is a list of tips and code snippets that I reference often, either from my own code or from Stack Overflow or my own code based on Stack Overflow posts. I’m planning to potentially add to this post as time goes on. It is my “Cookbook” so-to-speak.</p>
+<hr />
+<div id="warning-this-is-not-particularly-intended-for-beginner-data.table-users" class="section level2">
+<h2>Warning: This is not particularly intended for beginner data.table users</h2>
+<p>If you do happen to be a beginner, I highly suggest taking a look at <a href="https://www.datacamp.com/courses/data-table-data-manipulation-r-tutorial">their training on datacamp.com</a>, which is really the best way to get a feel for the syntax and brings you into ‘advanced’ data.table. There is also a handy cheat sheet, although I wish the cheat sheet was an RMarkdown document! Even after completing this, I do not feel like an expert, which is why I often find myself on Stack Overflow.</p>
+</div>
+<div id="tips-and-tricks-list" class="section level2">
+<h2>Tips and Tricks List:</h2>
+<div id="ordering-data-by-multiple-columns-using-frank-and-setorder" class="section level3">
+<h3>Ordering data by multiple columns using <code>frank()</code> and <code>setorder()</code></h3>
+<p>In my work I often find myself with a collection of records where a single record can have multiple values. Sometimes you want to rank your whole dataset or sometimes you might want to rank by group. First tip is if you do need the rank values for your entire table, the <code>frank()</code> function provided with the <code>data.table</code> package will do the job. It is pretty fast, even when ranking by groups over a million rows. In the exa</p>
+<p>An example that I might face can be seen in the below snippet of code. Even if I increased the sample to 100M rows, I am able to run the below code on my bottom of the line MacBook Pro.</p>
+<pre class="r"><code>library(data.table)
+set.seed(1234)
+vals &lt;- sample(1000000, replace = T)
+dt1 &lt;- data.table(A = rep(LETTERS[1:10], 1000000),
+                 B = vals)
+dt1</code></pre>
+<pre><code>##           A      B
+##        1: A 113704
+##        2: B 622300
+##        3: C 609275
+##        4: D 623380
+##        5: E 860916
+##       ---         
+##  9999996: F 323803
+##  9999997: G 987356
+##  9999998: H 322506
+##  9999999: I 768795
+## 10000000: J 535104</code></pre>
+<pre class="r"><code>system.time(dt1[, B_rank := frank(B), A])</code></pre>
+<pre><code>##    user  system elapsed 
+##   2.407   0.167   0.674</code></pre>
+<pre class="r"><code># Increase to 10M
+set.seed(1234)
+vals &lt;- sample(10000000, replace = T)
+dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+dt2</code></pre>
+<pre><code>##            A       B
+##         1: A 1137035
+##         2: B 6222995
+##         3: C 6092748
+##         4: D 6233795
+##         5: E 8609154
+##        ---          
+##  99999996: F 9722749
+##  99999997: G 1275266
+##  99999998: H 2324721
+##  99999999: I 4567535
+## 100000000: J 9922068</code></pre>
+<pre class="r"><code>system.time(dt2[, B_rank := frank(B), A])</code></pre>
+<pre><code>##    user  system elapsed 
+##  24.371   1.792   9.509</code></pre>
+<pre class="r"><code>        #    A       B  B_rank
+        # 1: A 1137035 1139316
+        # 2: B 6222995 6218296
+        # 3: C 6092748 6094866
+        # 4: D 6233795 6227806</code></pre>
+<p>With that said, I often time find myself not needing a column to rank things on but rather just need to order by or extract rows with the highest one or two values of a group in a column. An example might be that I have a lot of duplication in my dataset, but there is one column that might have a value that may determine the ‘best’ selection of the duplicates. That’s where I find <code>setorder()</code> to be a better choice for me.</p>
+<pre class="r"><code>set.seed(1234)
+vals &lt;- sample(1000000, replace = T)
+dt1 &lt;- data.table(A = rep(LETTERS[1:10], 1000000),
+                 B = vals)
+system.time(setorder(dt1, A, B))</code></pre>
+<pre><code>##    user  system elapsed 
+##   1.814   0.121   0.506</code></pre>
+<pre class="r"><code># Increase to 10M
+set.seed(1234)
+vals &lt;- sample(10000000, replace = T)
+dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+system.time(setorder(dt2, A, B))</code></pre>
+<pre><code>##    user  system elapsed 
+##  16.868   1.391   5.292</code></pre>
+<p>I just used simple benchmarking here but you can see particularly for the bigger dataset that the ordering is much faster than creating the column with rank values. From here you can add your own primitive rank or you could extract the top row(s) by group.</p>
+<pre class="r"><code># You can add a primitive version of a rank, and altogether the operation would be faster than frank()
+# that said, it does not handle ties in any particularly good way.
+dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+system.time(setorder(dt2, A, B)[, B_rank := seq(1:.N), A])</code></pre>
+<pre><code>##    user  system elapsed 
+##  20.364   1.504   6.293</code></pre>
+<pre class="r"><code>dt2
+
+# Extract top 1 row
+dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+dt2[dt2[, .I[1], A]$V1]</code></pre>
+<pre><code>##     A       B
+##  1: A 1137035
+##  2: B 6222995
+##  3: C 6092748
+##  4: D 6233795
+##  5: E 8609154
+##  6: F 6403107
+##  7: G   94958
+##  8: H 2325506
+##  9: I 6660838
+## 10: J 5142512</code></pre>
+<pre class="r"><code>system.time(dt2[dt2[, .I[1], A]$V1])</code></pre>
+<pre><code>##    user  system elapsed 
+##   5.735   1.053   1.799</code></pre>
+<pre class="r"><code># OR
+system.time(dt2[dt2[, head(.I, 1), A]$V1]) #better if picking more than 1 (in my opinion!)</code></pre>
+<pre><code>##    user  system elapsed 
+##   5.231   1.085   1.748</code></pre>
+<p>For a quick explanation: the <code>dt2[, .I[1], A]$V1</code> expression which is inside the <code>dt2[]</code> i argument is returning the first row number for each group in column A. <code>dt2[dt2[, head(.I, 1), A]$V1]</code> is a good option, <em>PARTICULARLY</em> if you are not sure if choosing the top 5 rows per group and you are not sure if each group has 5 values. BTW, the <code>.I</code> notation I will go over in a tip further down.</p>
+<hr />
+</div>
+<div id="fill-nas-in-a-data.table-using-set" class="section level3">
+<h3>Fill NAs in a data.table using <code>set()</code></h3>
+<p>There are times where you need to fill the NAs in a data.table with a certain value, like a 0 or an empty string. I often refer to this <a href="https://stackoverflow.com/questions/7235657/fastest-way-to-replace-nas-in-a-large-data-table">SO answer</a> .</p>
+<pre class="r"><code>f_dowle3 = function(DT) {
+  # either of the following for loops
+
+  # by name :
+  for (j in names(DT))
+    set(DT,which(is.na(DT[[j]])),j,0)
+
+  # or by number (slightly faster than by name) :
+  for (j in seq_len(ncol(DT)))
+    set(DT,which(is.na(DT[[j]])),j,0)
+}</code></pre>
+<p>This is also a general reminder that <code>set()</code> is a great function in data.table, especially in cases where the <code>:=</code> notation is tricky for some reason or when the data.table is particularly large.</p>
+<hr />
+</div>
+<div id="writing-functionsprocedures-containing-data.tables-sometimes-modifying-the-input-data.table-is-ok-but-be-sure-you-know-exactly-what-youre-doing" class="section level3">
+<h3>Writing functions/procedures containing data.tables – Sometimes modifying the input data.table is OK, but be sure you know exactly what you’re doing!</h3>
+<p>There are times in my work where I find myself applying some series of transformations on multiple data.table objects (you might wonder why I have multiple data.tables with similar information, but that is usually a side effect of me generally getting datasets ready for Shiny dashboards). Sometimes, I can put the data.tables through a for loop, sometimes I might write functions that operate on the original data.table – where the “output” is basically a modified version of the input. I’m still not sure which is the best, but to me it has been relieving to know that it’s <a href="https://stackoverflow.com/questions/13756178/writings-functions-procedures-for-data-table-objects">not out of question to have some side effect on the input data</a></p>
+<hr />
+</div>
+<div id="what-the-heck-is-.i" class="section level3">
+<h3>What the heck is <code>.I</code>?</h3>
+<p>Coming soon</p>
+<hr />
+</div>
+<div id="what-the-heck-is-cj" class="section level3">
+<h3>What the heck is <code>CJ()</code>?</h3>
+<p>Coming soon</p>
+</div>
+</div>
