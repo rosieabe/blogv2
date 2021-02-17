@@ -1,0 +1,130 @@
+---
+title: data.table - A list of examples I like to reference
+author: Rosie
+date: '2019-01-06'
+output:
+  blogdown::html_page:
+    toc: true
+    toc_depth: 3
+slug: data-table-a-list-of-examples-i-like-to-reference
+categories:
+  - R
+  - Reference
+tags:
+  - data.table
+---
+
+I use the `data.table` package quite a bit at work and it's become my preferred way to work with data in R, even with smaller data sizes. As much as the tidyverse is readable and smart, there is something about `data.table` syntax that I've really come to appreciate. It's harder to read, but quicker to type. But the readability becomes an issue sometimes, since I might forget tips and tricks that have been useful in the past.
+
+I wanted to create a post here with rather selfish intentions, honestly. This is a list of tips and code snippets that I reference often, either from my own code or from Stack Overflow or my own code based on Stack Overflow posts. I'm planning to potentially add to this post as time goes on. It is my "Cookbook" so-to-speak.
+
+----
+
+## Warning: This is not particularly intended for beginner data.table users 
+If you do happen to be a beginner, I highly suggest taking a look at [their training on datacamp.com](https://www.datacamp.com/courses/data-table-data-manipulation-r-tutorial), which is really the best way to get a feel for the syntax and brings you into 'advanced' data.table. There is also a handy cheat sheet, although I wish the cheat sheet was an RMarkdown document! Even after completing this, I do not feel like an expert, which is why I often find myself on Stack Overflow.
+
+## Tips and Tricks List:
+
+### Ordering data by multiple columns using `frank()` and `setorder()` 
+In my work I often find myself with a collection of records where a single record can have multiple values. Sometimes you want to rank your whole dataset or sometimes you might want to rank by group. First tip is if you do need the rank values for your entire table, the `frank()` function provided with the `data.table` package will do the job. It is pretty fast, even when ranking by groups over a million rows. In the exa
+
+An example that I might face can be seen in the below snippet of code. Even if I increased the sample to 100M rows, I am able to run the below code on my bottom of the line MacBook Pro.
+```{r}
+library(data.table)
+set.seed(1234)
+vals <- sample(1000000, replace = T)
+dt1 <- data.table(A = rep(LETTERS[1:10], 1000000),
+                 B = vals)
+dt1
+system.time(dt1[, B_rank := frank(B), A])
+
+# Increase to 10M
+set.seed(1234)
+vals <- sample(10000000, replace = T)
+dt2 <- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+dt2
+system.time(dt2[, B_rank := frank(B), A])
+
+        #    A       B  B_rank
+        # 1: A 1137035 1139316
+        # 2: B 6222995 6218296
+        # 3: C 6092748 6094866
+        # 4: D 6233795 6227806
+```
+
+With that said, I often time find myself not needing a column to rank things on but rather just need to order by or extract rows with the highest one or two values of a group in a column. An example might be that I have a lot of duplication in my dataset, but there is one column that might have a value that may determine the 'best' selection of the duplicates. That's where I find `setorder()` to be a better choice for me.
+
+```{r}
+set.seed(1234)
+vals <- sample(1000000, replace = T)
+dt1 <- data.table(A = rep(LETTERS[1:10], 1000000),
+                 B = vals)
+system.time(setorder(dt1, A, B))
+
+# Increase to 10M
+set.seed(1234)
+vals <- sample(10000000, replace = T)
+dt2 <- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+system.time(setorder(dt2, A, B))
+```
+
+I just used simple benchmarking here but you can see particularly for the bigger dataset that the ordering is much faster than creating the column with rank values. From here you can add your own primitive rank or you could extract the top row(s) by group.
+
+```{r}
+# You can add a primitive version of a rank, and altogether the operation would be faster than frank()
+# that said, it does not handle ties in any particularly good way.
+dt2 <- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+system.time(setorder(dt2, A, B)[, B_rank := seq(1:.N), A])
+dt2
+
+# Extract top 1 row
+dt2 <- data.table(A = rep(LETTERS[1:10], 10000000),
+                 B = vals)
+dt2[dt2[, .I[1], A]$V1]
+
+system.time(dt2[dt2[, .I[1], A]$V1])
+
+# OR
+system.time(dt2[dt2[, head(.I, 1), A]$V1]) #better if picking more than 1 (in my opinion!)
+```
+
+For a quick explanation: the `dt2[, .I[1], A]$V1` expression which is inside the `dt2[]` i argument is returning the first row number for each group in column A. `dt2[dt2[, head(.I, 1), A]$V1]` is a good option, *PARTICULARLY* if you are not sure if choosing the top 5 rows per group and you are not sure if each group has 5 values.  BTW, the `.I` notation I will go over in a tip further down.
+
+----
+
+### Fill NAs in a data.table using `set()`
+There are times where you need to fill the NAs in a data.table with a certain value, like a 0 or an empty string. I often refer to this [SO answer](https://stackoverflow.com/questions/7235657/fastest-way-to-replace-nas-in-a-large-data-table) .
+
+```{r eval = F}
+f_dowle3 = function(DT) {
+  # either of the following for loops
+
+  # by name :
+  for (j in names(DT))
+    set(DT,which(is.na(DT[[j]])),j,0)
+
+  # or by number (slightly faster than by name) :
+  for (j in seq_len(ncol(DT)))
+    set(DT,which(is.na(DT[[j]])),j,0)
+}
+```
+
+This is also a general reminder that `set()` is a great function in data.table, especially in cases where the `:=` notation is tricky for some reason or when the data.table is particularly large.
+
+----
+
+### Writing functions/procedures containing data.tables -- Sometimes modifying the input data.table is OK, but be sure you know exactly what you're doing!
+There are times in my work where I find myself applying some series of transformations on multiple data.table objects (you might wonder why I have multiple data.tables with similar information, but that is usually a side effect of me generally getting datasets ready for Shiny dashboards). Sometimes, I can put the data.tables through a for loop, sometimes I might write functions that operate on the original data.table -- where the "output" is basically a modified version of the input. I'm still not sure which is the best, but to me it has been relieving to know that it's [not out of question to have some side effect on the input data](https://stackoverflow.com/questions/13756178/writings-functions-procedures-for-data-table-objects)
+
+----
+
+### What the heck is `.I`?
+Coming soon
+
+----
+
+### What the heck is `CJ()`?
+Coming soon

@@ -1,0 +1,18 @@
+---
+title: Highcharter for Interactive Plotting
+author: Rosie
+date: '2019-08-15'
+slug: highcharter-for-interactive-plotting
+categories:
+  - R
+  - Data Visualization
+tags:
+  - highcharter
+---
+
+Another post that I've been wanting to make for this blog is a quick post about the lovely package called `highcharter` which is an R port of the Javascript charting engine called Highcharts. Highcharts makes it easy to put together interactive charts. If you or someone at your workplace is more familiar with Javascript, perhaps the most helpful information would be at the official [Highcharts website](https://www.highcharts.com).
+
+Highcharter has mostly been maintained by one person, and while he has done a great job, I am hoping that more users make use of this package and hopefully grow its community enough so that others can also contribute to the development of the package. 
+
+Over the course of this post I will make use of some of the common R datasets.
+
