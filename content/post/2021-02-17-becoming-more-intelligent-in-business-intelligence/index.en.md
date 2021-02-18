@@ -1,5 +1,5 @@
 ---
-title: becoming more intelligent in business intelligence
+title: just an update to this place
 author: R package build
 date: '2021-02-17'
 slug: []
@@ -28,22 +28,6 @@ sequenceDiagrams:
   options: ''
 ---
 
-2020 was definitely a year to remember. I try to remember the good and the bad together.
+2020 was definitely a year to remember. I try to remember the good and the bad together (more on that below). In this long and isolated time, I've taken some time to re-think what I'm good at, what I've learned, and what I can contribute publicly. I've decided to perhaps focus on business intelligence subjects, since that is the turn my career seems to have taken for now.
 
-I've also had
-
-<!--more-->
-
-In the past year, I've been laid off, found a new job, had my car totalled, had a long relationship end, had a phone stolen, canceled a very exciting solo travel trip, weathered a pandemic, dealt with *the freaking news* on a daily basis, among other things, and I know that other people have had a much worse year than I have.
-
-Some of my last really good memories are from RStudio Conference 2020 in San Francisco, before COVID times. What a weird sound. *Before*-COVID? A conference in person? Me, outside of Los Angeles? Was it really just a year ago? What have I learned since then, where am I now, and where am I going? I just feel like pondering that here.
-
-Oh also, I updated my hugo theme. It's rad, right? Luckily I had my first blogpost here to help guide my way.
-
-## Just some background
-
-I lost my job about a month prior to the pandemic. To be honest, this was very fortunate timing, as it gave me a month to search for jobs before employers were cutting off hiring (or worse!). Searching for a job while jobless was actually kind of delightful -- I didn't have to call off work to take interviews, and I could spend about 50% of my days either prepping for interviews or studying. 
-
-And I landed what felt like a dream job. I am still employed here, so I can't say much specifically about my current role. I've been lucky enough to continue working in analytics, but as time has gone on I've realized that the job I thought I wanted perhaps is not what I actually wanted. 
-
-## It begins with doubt
+Oh also, I updated my hugo theme. It's rad, right? Luckily I had my first blogpost here to help guide my way. 
