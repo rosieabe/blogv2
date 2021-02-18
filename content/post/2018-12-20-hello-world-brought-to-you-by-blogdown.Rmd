@@ -11,6 +11,8 @@ tags:
 
 So I thought I'd make my first post here about the process for me, a non-web-developer, non-guru-nor-R-master to create this blog, host it, and then tie it to this domain. TL;DR not 100% smooth for the truest of noobs, but mostly painless.
 
+<!--more-->
+
 I'll quickly name off the steps that I took after reading Yihui's `blogdown` book, found [here](https://bookdown.org/yihui/blogdown/). You honestly don't need to read this post to make a blogdown blog, and of course there are other ways to go about this also mentioned in the book, but I'm just documenting some things that I've done, personally.
 
 1. Updated both R and RStudio 

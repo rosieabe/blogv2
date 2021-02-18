@@ -14,11 +14,13 @@ tags:
   - data.table
 ---
 
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 <div id="TOC">
 <ul>
 <li><a href="#warning-this-is-not-particularly-intended-for-beginner-data.table-users">Warning: This is not particularly intended for beginner data.table users</a></li>
-<li><a href="#tips-and-tricks-list">Tips and Tricks List:</a><ul>
+<li><a href="#tips-and-tricks-list">Tips and Tricks List:</a>
+<ul>
 <li><a href="#ordering-data-by-multiple-columns-using-frank-and-setorder">Ordering data by multiple columns using <code>frank()</code> and <code>setorder()</code></a></li>
 <li><a href="#fill-nas-in-a-data.table-using-set">Fill NAs in a data.table using <code>set()</code></a></li>
 <li><a href="#writing-functionsprocedures-containing-data.tables-sometimes-modifying-the-input-data.table-is-ok-but-be-sure-you-know-exactly-what-youre-doing">Writing functions/procedures containing data.tables – Sometimes modifying the input data.table is OK, but be sure you know exactly what you’re doing!</a></li>
@@ -29,6 +31,7 @@ tags:
 </div>
 
 <p>I use the <code>data.table</code> package quite a bit at work and it’s become my preferred way to work with data in R, even with smaller data sizes. As much as the tidyverse is readable and smart, there is something about <code>data.table</code> syntax that I’ve really come to appreciate. It’s harder to read, but quicker to type. But the readability becomes an issue sometimes, since I might forget tips and tricks that have been useful in the past.</p>
+<!--more-->
 <p>I wanted to create a post here with rather selfish intentions, honestly. This is a list of tips and code snippets that I reference often, either from my own code or from Stack Overflow or my own code based on Stack Overflow posts. I’m planning to potentially add to this post as time goes on. It is my “Cookbook” so-to-speak.</p>
 <hr />
 <div id="warning-this-is-not-particularly-intended-for-beginner-data.table-users" class="section level2">
@@ -48,20 +51,20 @@ dt1 &lt;- data.table(A = rep(LETTERS[1:10], 1000000),
                  B = vals)
 dt1</code></pre>
 <pre><code>##           A      B
-##        1: A 113704
-##        2: B 622300
-##        3: C 609275
-##        4: D 623380
-##        5: E 860916
+##        1: A 761680
+##        2: B 630678
+##        3: C 304108
+##        4: D 932745
+##        5: E 295846
 ##       ---         
-##  9999996: F 323803
-##  9999997: G 987356
-##  9999998: H 322506
-##  9999999: I 768795
-## 10000000: J 535104</code></pre>
+##  9999996: F 895094
+##  9999997: G 367164
+##  9999998: H 493172
+##  9999999: I 454539
+## 10000000: J  50808</code></pre>
 <pre class="r"><code>system.time(dt1[, B_rank := frank(B), A])</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.407   0.167   0.674</code></pre>
+##   0.664   0.099   0.857</code></pre>
 <pre class="r"><code># Increase to 10M
 set.seed(1234)
 vals &lt;- sample(10000000, replace = T)
@@ -69,20 +72,20 @@ dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
                  B = vals)
 dt2</code></pre>
 <pre><code>##            A       B
-##         1: A 1137035
-##         2: B 6222995
-##         3: C 6092748
-##         4: D 6233795
-##         5: E 8609154
+##         1: A 1810256
+##         2: B 6595564
+##         3: C 7224201
+##         4: D 8684454
+##         5: E 9407364
 ##        ---          
-##  99999996: F 9722749
-##  99999997: G 1275266
-##  99999998: H 2324721
-##  99999999: I 4567535
-## 100000000: J 9922068</code></pre>
+##  99999996: F 1262113
+##  99999997: G 9788484
+##  99999998: H 1672373
+##  99999999: I 1824994
+## 100000000: J 3949637</code></pre>
 <pre class="r"><code>system.time(dt2[, B_rank := frank(B), A])</code></pre>
 <pre><code>##    user  system elapsed 
-##  24.371   1.792   9.509</code></pre>
+##   9.123   2.502  15.627</code></pre>
 <pre class="r"><code>        #    A       B  B_rank
         # 1: A 1137035 1139316
         # 2: B 6222995 6218296
@@ -95,7 +98,7 @@ dt1 &lt;- data.table(A = rep(LETTERS[1:10], 1000000),
                  B = vals)
 system.time(setorder(dt1, A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.814   0.121   0.506</code></pre>
+##   0.814   0.044   0.973</code></pre>
 <pre class="r"><code># Increase to 10M
 set.seed(1234)
 vals &lt;- sample(10000000, replace = T)
@@ -103,7 +106,7 @@ dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
                  B = vals)
 system.time(setorder(dt2, A, B))</code></pre>
 <pre><code>##    user  system elapsed 
-##  16.868   1.391   5.292</code></pre>
+##  11.397   1.305  17.241</code></pre>
 <p>I just used simple benchmarking here but you can see particularly for the bigger dataset that the ordering is much faster than creating the column with rank values. From here you can add your own primitive rank or you could extract the top row(s) by group.</p>
 <pre class="r"><code># You can add a primitive version of a rank, and altogether the operation would be faster than frank()
 # that said, it does not handle ties in any particularly good way.
@@ -111,7 +114,7 @@ dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
                  B = vals)
 system.time(setorder(dt2, A, B)[, B_rank := seq(1:.N), A])</code></pre>
 <pre><code>##    user  system elapsed 
-##  20.364   1.504   6.293</code></pre>
+##  12.322   1.348  15.630</code></pre>
 <pre class="r"><code>dt2
 
 # Extract top 1 row
@@ -119,23 +122,23 @@ dt2 &lt;- data.table(A = rep(LETTERS[1:10], 10000000),
                  B = vals)
 dt2[dt2[, .I[1], A]$V1]</code></pre>
 <pre><code>##     A       B
-##  1: A 1137035
-##  2: B 6222995
-##  3: C 6092748
-##  4: D 6233795
-##  5: E 8609154
-##  6: F 6403107
-##  7: G   94958
-##  8: H 2325506
-##  9: I 6660838
-## 10: J 5142512</code></pre>
+##  1: A 1810256
+##  2: B 6595564
+##  3: C 7224201
+##  4: D 8684454
+##  5: E 9407364
+##  6: F 6417511
+##  7: G 4539471
+##  8: H  871806
+##  9: I  249732
+## 10: J 9759272</code></pre>
 <pre class="r"><code>system.time(dt2[dt2[, .I[1], A]$V1])</code></pre>
 <pre><code>##    user  system elapsed 
-##   5.735   1.053   1.799</code></pre>
+##   2.643   0.830   3.705</code></pre>
 <pre class="r"><code># OR
 system.time(dt2[dt2[, head(.I, 1), A]$V1]) #better if picking more than 1 (in my opinion!)</code></pre>
 <pre><code>##    user  system elapsed 
-##   5.231   1.085   1.748</code></pre>
+##   2.904   1.773   7.370</code></pre>
 <p>For a quick explanation: the <code>dt2[, .I[1], A]$V1</code> expression which is inside the <code>dt2[]</code> i argument is returning the first row number for each group in column A. <code>dt2[dt2[, head(.I, 1), A]$V1]</code> is a good option, <em>PARTICULARLY</em> if you are not sure if choosing the top 5 rows per group and you are not sure if each group has 5 values. BTW, the <code>.I</code> notation I will go over in a tip further down.</p>
 <hr />
 </div>

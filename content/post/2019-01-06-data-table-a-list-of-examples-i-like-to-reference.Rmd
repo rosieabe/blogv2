@@ -16,6 +16,8 @@ tags:
 
 I use the `data.table` package quite a bit at work and it's become my preferred way to work with data in R, even with smaller data sizes. As much as the tidyverse is readable and smart, there is something about `data.table` syntax that I've really come to appreciate. It's harder to read, but quicker to type. But the readability becomes an issue sometimes, since I might forget tips and tricks that have been useful in the past.
 
+<!--more-->
+
 I wanted to create a post here with rather selfish intentions, honestly. This is a list of tips and code snippets that I reference often, either from my own code or from Stack Overflow or my own code based on Stack Overflow posts. I'm planning to potentially add to this post as time goes on. It is my "Cookbook" so-to-speak.
 
 ----
@@ -122,9 +124,7 @@ There are times in my work where I find myself applying some series of transform
 ----
 
 ### What the heck is `.I`?
-Coming soon
 
 ----
 
 ### What the heck is `CJ()`?
-Coming soon

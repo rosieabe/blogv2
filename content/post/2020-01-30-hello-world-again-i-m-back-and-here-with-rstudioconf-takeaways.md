@@ -14,6 +14,8 @@ tags:
 
 I say, "Hello World, Again", because after my first immediate interest in starting a technical blog, I ended bogged down in work, an online course, and personal life things that required me to take some more breaks from my personal projects. I couldn't keep up with my goals of blogging in 2019, and although 2020 doesn't seem to be slowing down for me, I am currently sitting in my hotel room inspired and motivated to start up this blog again.
 
+<!--more-->
+
 # rstudio::conf Overall and TL;DR Takeaways
 
 ### R users have a lot in common
