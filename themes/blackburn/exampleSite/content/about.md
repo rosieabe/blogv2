@@ -1,15 +1,9 @@
----
-date: "2014-04-09"
-description: About me and this site
-sidemenu: "true"
-title: About
----
-
-This site was built with `blogdown` and built to house my thoughts about data, analytics, work, and other topics that spark my interest.
-
-`blogdown` makes use of Hugo, of which I'm leaving the original "About" below
-
---- 
++++
+title = "About"
+date = "2014-04-09"
+sidemenu = "true"
+description = "About me and this site"
++++
 
 Hugo is a static site engine written in Go.
 
